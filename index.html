@@ -3,60 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI Assistant</title>
+    <title>PLAZMA AI</title>
     <style>
         :root {
-            --bg: #f5f5f7;
-            --chat-bg: #ffffff;
-            --accent: #007aff;
-            --text: #1d1d1f;
-            --user-bubble: #007aff;
-            --bot-bubble: #f2f2f7;
+            --dark: #0a0500;
+            --lava: linear-gradient(90deg, #ff4e00, #ec9f05, #ff4e00);
+            --orange: #ff6a00;
+            --glow: 0 0 15px #ff4e00;
         }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+        
         body { 
-            background: var(--bg); 
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            margin: 0; padding: 0; color: var(--text);
+            background: var(--dark); 
+            margin: 0; overflow: hidden; color: #fff;
+            background-image: radial-gradient(circle at center, #1a0a00 0%, #0a0500 100%);
         }
-        .app { height: 100vh; display: flex; flex-direction: column; max-width: 600px; margin: 0 auto; background: var(--chat-bg); }
+
+        /* Анимированный фон лавы */
+        .lava-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; opacity: 0.1;
+            background: repeating-linear-gradient(45deg, #ff4e00 0%, #000 10%, #ec9f05 20%);
+            background-size: 200% 200%;
+            animation: flow 10s infinite linear;
+        }
+        @keyframes flow { 0% {background-position: 0 0;} 100% {background-position: 200% 200%;} }
+
+        .app { height: 100vh; display: flex; flex-direction: column; max-width: 800px; margin: 0 auto; border: 1px solid #331a00; box-shadow: var(--glow); }
+
+        .header { 
+            padding: 20px; text-align: center; font-weight: bold; font-size: 24px;
+            letter-spacing: 5px; background: rgba(0,0,0,0.8); border-bottom: 2px solid var(--orange);
+            text-shadow: var(--glow); color: var(--orange);
+        }
+
+        .chat { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 25px; }
+
+        /* Сообщения */
+        .msg-wrapper { display: flex; flex-direction: column; position: relative; }
+        .msg { 
+            max-width: 85%; padding: 15px; border-radius: 15px; font-size: 16px; 
+            line-height: 1.5; border: 1px solid transparent; transition: 0.3s;
+        }
+
+        .user { align-self: flex-end; background: rgba(50, 50, 50, 0.5); border-color: #444; color: #eee; }
         
-        .header { padding: 15px; border-bottom: 1px solid #e5e5e5; text-align: center; font-weight: 600; }
-        
-        .chat { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
-        
-        .msg { max-width: 80%; padding: 10px 15px; border-radius: 18px; font-size: 15px; line-height: 1.4; position: relative; }
-        .user { align-self: flex-end; background: var(--user-bubble); color: white; border-bottom-right-radius: 4px; }
-        .bot { align-self: flex-start; background: var(--bot-bubble); color: var(--text); border-bottom-left-radius: 4px; }
-        
-        pre { background: #1e1e1e; color: #dcdcdc; padding: 10px; border-radius: 8px; overflow-x: auto; font-size: 13px; margin: 8px 0; }
-        
-        .input-area { padding: 15px; border-top: 1px solid #e5e5e5; display: flex; gap: 10px; background: white; }
+        .bot { 
+            align-self: flex-start; background: rgba(20, 10, 0, 0.8); 
+            border-color: var(--orange); position: relative;
+            background-clip: padding-box;
+        }
+
+        /* Лавовый текст бота */
+        .bot-text {
+            background: var(--lava);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+            background-size: 200% auto;
+            animation: textFlow 3s linear infinite;
+        }
+        @keyframes textFlow { to { background-position: 200% center; } }
+
+        /* Аватарка Plazma */
+        .avatar {
+            width: 50px; height: 50px; border-radius: 50%;
+            background: radial-gradient(circle, #ff9d00, #ff4e00, #000);
+            border: 2px solid var(--orange); margin-top: 10px;
+            box-shadow: var(--glow); align-self: flex-start;
+            transition: 0.5s; position: relative;
+        }
+        .avatar.thinking {
+            animation: pulse 0.5s infinite alternate, rotate 1s infinite linear;
+            filter: brightness(1.5);
+        }
+        @keyframes pulse { from { transform: scale(1); box-shadow: 0 0 10px #ff4e00; } to { transform: scale(1.1); box-shadow: 0 0 30px #ffea00; } }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* Поле ввода */
+        .input-area { 
+            padding: 20px; background: rgba(0,0,0,0.9); border-top: 2px solid var(--orange);
+            display: flex; gap: 10px; align-items: center;
+        }
         input { 
-            flex: 1; border: 1px solid #d2d2d7; border-radius: 20px; padding: 10px 15px; 
-            outline: none; font-size: 16px; transition: border 0.2s;
+            flex: 1; background: #111; border: 1px solid var(--orange); border-radius: 25px;
+            padding: 12px 20px; color: var(--orange); outline: none; transition: 0.3s;
         }
-        input:focus { border-color: var(--accent); }
-        
-        button { 
-            background: var(--accent); color: white; border: none; width: 40px; height: 40px; 
-            border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0; transition: transform 0.1s;
+        input:focus { box-shadow: inset 0 0 10px var(--orange); }
+
+        .btn {
+            background: var(--orange); border: none; width: 45px; height: 45px;
+            border-radius: 50%; cursor: pointer; color: #000; font-weight: bold;
+            display: flex; align-items: center; justify-content: center; box-shadow: var(--glow);
         }
-        button:active { transform: scale(0.9); }
-        
-        .loading { font-size: 12px; color: #8e8e93; margin-left: 20px; display: none; }
+        .btn:hover { transform: scale(1.1); }
+        .btn-mic.active { background: #ff0000; animation: pulse 0.6s infinite alternate; }
+
+        pre { background: #000; padding: 10px; border-left: 3px solid var(--orange); overflow-x: auto; color: #ff9d00; }
     </style>
 </head>
 <body>
 
+<div class="lava-bg"></div>
+
 <div class="app">
-    <div class="header">Gemini AI Assistant</div>
+    <div class="header">PLAZMA :: CORE</div>
     <div class="chat" id="chat"></div>
-    <div id="loading" class="loading">Печатает...</div>
+    
     <div class="input-area">
-        <input type="text" id="userInput" placeholder="Спросите что-нибудь...">
-        <button id="sendBtn">↑</button>
+        <button id="micBtn" class="btn btn-mic">🎤</button>
+        <input type="text" id="userInput" placeholder="Введите команду для PLAZMA...">
+        <button id="sendBtn" class="btn">🚀</button>
     </div>
 </div>
 
@@ -64,67 +122,114 @@
     const chatEl = document.getElementById('chat');
     const inputEl = document.getElementById('userInput');
     const sendBtn = document.getElementById('sendBtn');
-    const loadingEl = document.getElementById('loading');
+    const micBtn = document.getElementById('micBtn');
 
-    // ТВОЙ КЛЮЧ УЖЕ ЗДЕСЬ
     const API_KEY = 'AIzaSyAPAPolrbv3TtYSO27MQG-bEMK0DxDE1Ns'; 
     const URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
     let history = [];
+    let isThinking = false;
+
+    // Голосовой ввод
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'ru-RU';
+        
+        micBtn.onclick = () => {
+            recognition.start();
+            micBtn.classList.add('active');
+        };
+
+        recognition.onresult = (event) => {
+            inputEl.value = event.results[0][0].transcript;
+            micBtn.classList.remove('active');
+            sendMessage();
+        };
+        recognition.onend = () => micBtn.classList.remove('active');
+    }
+
+    // Голосовой вывод
+    function speak(text) {
+        const msg = new SpeechSynthesisUtterance();
+        msg.text = text;
+        msg.lang = 'ru-RU';
+        // Настройка "мужского" баса (если доступно в системе)
+        const voices = window.speechSynthesis.getVoices();
+        msg.voice = voices.find(v => v.name.includes('Microsoft Pavel')) || voices[0];
+        msg.pitch = 0.5; 
+        msg.rate = 0.9;
+        window.speechSynthesis.speak(msg);
+    }
 
     async function sendMessage() {
         const text = inputEl.value.trim();
-        if (!text) return;
+        if (!text || isThinking) return;
 
         addMessage(text, 'user');
         inputEl.value = '';
-        loadingEl.style.display = 'block';
+        
+        isThinking = true;
+        const thinkingAvatar = createThinkingAvatar();
 
-        // Формируем историю для памяти
-        history.push({ role: "user", parts: [{ text: text }] });
+        history.push({ "role": "user", "parts": [{ "text": text }] });
 
         try {
             const response = await fetch(URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ contents: history })
+                body: JSON.stringify({ "contents": history })
             });
 
             const data = await response.json();
             const botText = data.candidates[0].content.parts[0].text;
 
-            loadingEl.style.display = 'none';
+            thinkingAvatar.remove();
             addMessage(botText, 'bot');
-            history.push({ role: "model", parts: [{ text: botText }] });
+            speak(botText);
+            history.push({ "role": "model", "parts": [{ "text": botText }] });
 
         } catch (e) {
-            loadingEl.style.display = 'none';
-            addMessage("Ошибка связи. Проверь интернет или ключ.", 'bot');
-            console.error(e);
+            thinkingAvatar.remove();
+            addMessage("КРИТИЧЕСКАЯ ОШИБКА ЯДРА. ПРОВЕРЬТЕ VPN.", 'bot');
+        } finally {
+            isThinking = false;
         }
     }
 
     function addMessage(text, side) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'msg-wrapper';
+
         const div = document.createElement('div');
         div.className = `msg ${side}`;
-        // Рендерим код, если он есть
-        div.innerHTML = text.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-        chatEl.appendChild(div);
+        
+        if (side === 'bot') {
+            div.innerHTML = `<div class="bot-text">${text.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>')}</div>`;
+            wrapper.appendChild(div);
+            const avatar = document.createElement('div');
+            avatar.className = 'avatar';
+            wrapper.appendChild(avatar);
+        } else {
+            div.innerText = text;
+            wrapper.appendChild(div);
+        }
+
+        chatEl.appendChild(wrapper);
         chatEl.scrollTop = chatEl.scrollHeight;
     }
 
-    // Слушатели событий
-    sendBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        sendMessage();
-    });
+    function createThinkingAvatar() {
+        const avatar = document.createElement('div');
+        avatar.className = 'avatar thinking';
+        chatEl.appendChild(avatar);
+        chatEl.scrollTop = chatEl.scrollHeight;
+        return avatar;
+    }
 
-    inputEl.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendMessage();
-    });
-
-    window.onload = () => addMessage("Привет! Я новая версия нейронки. Чем могу помочь?", "bot");
+    sendBtn.onclick = sendMessage;
+    inputEl.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
+    window.onload = () => addMessage("ЯДРО PLAZMA АКТИВИРОВАНО. ЖДУ ПРИКАЗАНИЙ.", "bot");
 </script>
-
 </body>
 </html>
