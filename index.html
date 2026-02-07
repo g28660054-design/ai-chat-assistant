@@ -1,58 +1,54 @@
+
+    sendBtn.onclick = sendMessage;
+    inputEl.onkeypress = (e) => e.key === 'Enter' && sendMessage();
+    window.onload = () => addMessage("ЯДРО DEEPSEEK ИНТЕГРИРОВАНО. PLAZMA СЛУШАЕТ.", "bot");
+</script>
+
+</body>
+</html>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PLAZMA OS :: DEEPSEEK</title>
+    <title>PLAZMA CORE v2</title>
     <style>
-        /* Весь твой лавовый стиль остается тут */
-        :root { --dark: #050505; --lava: linear-gradient(135deg, #ff4e00, #ff8c00, #ff0000); --orange: #ff5f00; --glow: 0 0 20px rgba(255, 95, 0, 0.4); }
-        body { background: var(--dark); margin: 0; color: white; font-family: 'Segoe UI', sans-serif; height: 100vh; display: flex; flex-direction: column; }
-        .top-bar { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; background: #0f0f0f; border-bottom: 2px solid var(--orange); box-shadow: var(--glow); }
-        .logo { font-weight: 900; letter-spacing: 3px; color: var(--orange); text-shadow: var(--glow); }
-        .chat-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 20px; background: radial-gradient(circle, #150a00 0%, #050505 100%); }
-        .msg-block { display: flex; flex-direction: column; max-width: 85%; transition: 0.5s; }
-        .user { align-self: flex-end; } .bot { align-self: flex-start; }
-        .bubble { padding: 12px 18px; border-radius: 15px; font-size: 16px; line-height: 1.5; box-shadow: 0 4px 15px rgba(0,0,0,0.5); border: 1px solid #333; }
-        .user .bubble { background: #222; border-color: #444; }
-        .bot .bubble { background: rgba(20, 10, 0, 0.9); border-color: var(--orange); background: var(--lava); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 600; }
-        .avatar { width: 35px; height: 35px; border-radius: 50%; background: var(--lava); border: 2px solid var(--orange); box-shadow: var(--glow); margin-top: 8px; }
-        .thinking .avatar { animation: burn 0.8s infinite alternate; }
-        @keyframes burn { from { transform: scale(1); } to { transform: scale(1.3); filter: brightness(1.5); } }
-        .input-wrapper { padding: 20px; background: #0f0f0f; border-top: 1px solid #222; }
-        .input-box { display: flex; gap: 10px; background: #1a1a1a; border-radius: 30px; padding: 5px 15px; border: 1px solid var(--orange); }
-        input { flex: 1; background: none; border: none; color: white; height: 45px; outline: none; }
-        .btn-send { background: none; border: none; color: var(--orange); font-size: 22px; cursor: pointer; }
-        pre { background: #000; padding: 10px; border-radius: 5px; color: #ff8c00; overflow-x: auto; border: 1px solid var(--orange); }
+        :root { --lava: #ff5f00; --bg: #050505; }
+        body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; height: 100vh; display: flex; flex-direction: column; }
+        .header { padding: 15px; text-align: center; border-bottom: 2px solid var(--lava); color: var(--lava); font-weight: bold; letter-spacing: 2px; box-shadow: 0 0 15px rgba(255,95,0,0.3); }
+        .chat { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; background: radial-gradient(circle, #1a0a00 0%, #050505 100%); }
+        .msg { padding: 12px 18px; border-radius: 15px; max-width: 85%; line-height: 1.4; font-size: 16px; }
+        .user { align-self: flex-end; background: #222; border: 1px solid #444; }
+        .bot { align-self: flex-start; border: 1px solid var(--lava); background: rgba(255, 95, 0, 0.05); color: #ffbc8c; }
+        .bot b { background: linear-gradient(90deg, #ff4e00, #ec9f05); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--lava); margin-top: 5px; box-shadow: 0 0 10px var(--lava); }
+        .input-area { padding: 20px; background: #000; border-top: 1px solid #222; display: flex; gap: 10px; }
+        input { flex: 1; background: #111; border: 1px solid var(--lava); border-radius: 20px; padding: 10px 15px; color: white; outline: none; }
+        button { background: var(--lava); border: none; width: 45px; height: 45px; border-radius: 50%; color: black; font-size: 20px; cursor: pointer; }
+        pre { background: #000; padding: 10px; border-radius: 5px; color: #ffa500; overflow-x: auto; font-size: 13px; border: 1px solid #331a00; }
+        .status { font-size: 10px; color: #555; text-align: center; padding: 5px; }
     </style>
 </head>
 <body>
 
-<div class="top-bar">
-    <div class="logo">PLAZMA :: DEEPSEEK</div>
-    <div style="color: var(--orange); font-size: 12px;">SYSTEM ACTIVE</div>
-</div>
-
-<div class="chat-container" id="chat"></div>
-
-<div class="input-wrapper">
-    <div class="input-box">
-        <input type="text" id="userInput" placeholder="Приказ для PLAZMA (DeepSeek)...">
-        <button id="sendBtn" class="btn-send">🚀</button>
-    </div>
+<div class="header">PLAZMA :: DEEPSEEK CORE</div>
+<div class="chat" id="chat"></div>
+<div id="status" class="status">СИСТЕМА ГОТОВА</div>
+<div class="input-area">
+    <input type="text" id="userInput" placeholder="Приказ для Plazma...">
+    <button id="sendBtn">🚀</button>
 </div>
 
 <script>
     const chatEl = document.getElementById('chat');
     const inputEl = document.getElementById('userInput');
     const sendBtn = document.getElementById('sendBtn');
+    const statusEl = document.getElementById('status');
 
-    // ВСТАВЬ СЮДА СВОЙ КЛЮЧ ОТ DEEPSEEK
-    const DEEPSEEK_KEY = 'sk-8ddcacb7f1624754872d4ec69aa8a518'; 
+    // ТВОЙ КЛЮЧ УЖЕ ВСТАВЛЕН:
+    const API_KEY = 'sk-8ddcacb7f1624754872d4ec69aa8a518';
 
-    let history = [
-        { role: "system", content: "Ты Plazma — мощный ИИ в лавовом стиле. Отвечай уверенно и круто." }
-    ];
+    let history = [{ role: "system", content: "Ты Plazma — ИИ в стиле раскаленной лавы. Твои ответы всегда крутые и точные." }];
 
     async function sendMessage() {
         const text = inputEl.value.trim();
@@ -60,60 +56,64 @@
 
         addMessage(text, 'user');
         inputEl.value = '';
-        
-        const thinkingId = addThinking();
+        statusEl.innerText = "СИНТЕЗ ОТВЕТА...";
+
         history.push({ role: "user", content: text });
 
         try {
-            const response = await fetch('https://api.deepseek.com/chat/completions', {
+            // Используем прокси для обхода блокировок CORS и региональных ограничений
+            const response = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent('https://api.deepseek.com/chat/completions'), {
+                method: "POST",
+                // Allorigins требует POST данные в определенном формате или использование своего прокси
+                // Для простоты попробуем сначала прямой запрос, если он упадет - добавим прокси
+            });
+            
+            // Если прямой запрос не идет, используем альтернативный метод (Fetch напрямую к DeepSeek)
+            const directResponse = await fetch('https://api.deepseek.com/chat/completions', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${DEEPSEEK_KEY}`
+                    "Authorization": `Bearer ${API_KEY}`
                 },
                 body: JSON.stringify({
                     model: "deepseek-chat",
                     messages: history,
-                    stream: false
+                    temperature: 0.7
                 })
             });
 
-            const data = await response.json();
-            const botText = data.choices[0].message.content;
+            const data = await directResponse.json();
+            
+            if (data.error) {
+                throw new Error(data.error.message);
+            }
 
-            document.getElementById(thinkingId).remove();
+            const botText = data.choices[0].message.content;
             addMessage(botText, 'bot');
             history.push({ role: "assistant", content: botText });
+            statusEl.innerText = "ОНЛАЙН";
 
         } catch (e) {
-            if (document.getElementById(thinkingId)) document.getElementById(thinkingId).remove();
-            addMessage("СБОЙ СЕРВЕРА DEEPSEEK. ПРОВЕРЬ БАЛАНС ИЛИ КЛЮЧ.", 'bot');
             console.error(e);
+            addMessage("ОШИБКА: " + (e.message.includes('баланс') ? "ПОПОЛНИТЕ БАЛАНС DEEPSEEK" : "ПРОВЕРЬТЕ VPN ИЛИ КЛЮЧ"), 'bot');
+            statusEl.innerText = "СБОЙ СИСТЕМЫ";
         }
     }
 
     function addMessage(text, side) {
-        const block = document.createElement('div');
-        block.className = `msg-block ${side}`;
-        let content = text.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-        block.innerHTML = `<div class="bubble">${content}</div>${side === 'bot' ? '<div class="avatar"></div>' : ''}`;
-        chatEl.appendChild(block);
+        const div = document.createElement('div');
+        div.className = `msg ${side}`;
+        // Форматирование кода и лавовый стиль для бота
+        let html = text.replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+        div.innerHTML = side === 'bot' ? `<b>${html}</b><div class="avatar"></div>` : html;
+        chatEl.appendChild(div);
         chatEl.scrollTop = chatEl.scrollHeight;
-    }
-
-    function addThinking() {
-        const id = 't-' + Date.now();
-        const block = document.createElement('div');
-        block.id = id; block.className = 'msg-block bot thinking';
-        block.innerHTML = '<div class="bubble">СИНТЕЗИРУЮ ПОТОК...</div><div class="avatar"></div>';
-        chatEl.appendChild(block);
-        chatEl.scrollTop = chatEl.scrollHeight;
-        return id;
     }
 
     sendBtn.onclick = sendMessage;
-    inputEl.onkeypress = (e) => e.key === 'Enter' && sendMessage();
-    window.onload = () => addMessage("ЯДРО DEEPSEEK ИНТЕГРИРОВАНО. PLAZMA СЛУШАЕТ.", "bot");
+    inputEl.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
+
+    window.onload = () => addMessage("ЯДРО PLAZMA АКТИВИРОВАНО. ВВЕДИТЕ ДАННЫЕ.", "bot");
 </script>
 
 </body>
